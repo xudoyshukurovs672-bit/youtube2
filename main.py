@@ -235,12 +235,11 @@ app = Flask(__name__)
 def home():
     return "Bot is running"
 
-def run_bot():
-    executor.start_polling(dp, skip_updates=True)
-
-if __name__ == "__main__":    
-
-    threading.Thread(target=run_bot).start()
-
+if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)    
+
+    threading.Thread(
+        target=lambda: app.run(host="0.0.0.0", port=port)
+    ).start()
+
+    executor.start_polling(dp, skip_updates=True)
