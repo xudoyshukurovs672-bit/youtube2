@@ -7,6 +7,7 @@ from googleapiclient.discovery import build
 from flask import Flask
 import threading 
 import os
+import re
 
 # ===== SOZLAMALAR =====
 BOT_TOKEN = "8777042791:AAHZ2Osid5STlGxB7ALnsDNUT854LfLSIAE"
@@ -30,14 +31,18 @@ conn.commit()
 
 # ===== FUNKSIYALAR =====
 
-def extract_video_id(url):
-    patterns = [ r"v=([a-zA-Z0-9_-])", r"youtu\.be/([a-zA-Z0-9_-])", r"shorts/([a-zA-Z0-9_-]{11})"]
-    for pattern in patterns:
-        match = re.search(pattern, url)
-        if match:
-            return match.group(1)
 
-    return None        
+
+def extract_video_id(url):
+    regex = r"(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([A-Za-z0-9_-]{11})"
+    match = re.search(regex, url)
+
+    if match:
+        return match.group(1)
+
+    return None
+
+           
 
 def get_video_info(video_id):
     request = youtube.videos().list(
@@ -243,3 +248,4 @@ if __name__ == "__main__":
     ).start()
 
     executor.start_polling(dp, skip_updates=True)
+
